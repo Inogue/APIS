@@ -3,7 +3,7 @@ from textual.widgets import Button, Label
 
 class HelloWorld(App):
     	
-	CSS_PATH = "hello.css"
+	CSS_PATH = "style.css"
 	def compose(self) -> ComposeResult:
 		self.close_button = Button("Close", id="close")
 		yield Label("Hello Textual", id="hello")
