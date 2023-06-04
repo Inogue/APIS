@@ -7,19 +7,23 @@ import sys
 from fabulous import utils,image
 from textual.app import App, ComposeResult
 from textual.widgets import Button, Label
+from textual.widget import Widget
+import tkinter as tk
+from PIL import Image, ImageTk
 
 class Blackjack(App):
 	CSS_PATH = "style.css"
 	def compose(self) -> ComposeResult:
-		self.close_button = Button("Close", id="close")
 		yield Label("Blackjack", id="hello")
+		M
 		self.option_button1 = Button("Rules", id="rules")
 		self.option_button2 = Button("Draw_card", id="card")
+		self.close_button = Button("Close", id="close")
 		self.rules = Label("1-El objetivo del juego es llegar a 21, quien mas cerca esté, gana.\n2-A la hora de sumar las cartas, se suman por su numero excepto el as y las figuras:\nEl AS puede contar como un 1 o como un 11 dependiendo de lo que decida el jugador, las figuras cuentan todas 10.\n3-El croupier se plantara en el momento que alcance la puntuacion de 16 o mas.\n4-Cuando al croupier le toca un as, siempre sera 11 a no ser que se pase de 21, entonces sera 1.\n5-Puedes pedir las cartas que quieras, cuando llegues a 22 o mas habras perdido.")
-		yield self.close_button
 		yield self.option_button1
-		yield self.option_button2
-	
+		yield self.option_button2	
+		yield self.close_button
+
 	def on_mount(self) -> None:
 		self.screen.styles.background = "darkblue"
 		self.close_button.styles.background = "red"
@@ -30,8 +34,11 @@ class Blackjack(App):
 		if event.button.id=="close":
 			self.exit(event.button.id)
 		elif event.button.id=="rules":
-			self.rules()
-		
+			self.widgets.clear()
+			rules()
+		elif event.button.id=="card":
+			self.widgets.clear()
+			draw_card(deck_id, 1)
 def new_deck():
 	api_url="https://deckofcardsapi.com/api/deck/new/"
 
@@ -71,11 +78,16 @@ def draw_card(deck_id, cards):
 
 	image_name="carta.png"
 
-	with open(image_name, "wb") as handler:
-		handler.write(images)
-		img = image.Image(image_name)
-		time.sleep(1)
-		print(img)
+	imagen = Image.open(image_name)
+	imagen.thumbnail((500, 500))
+	imagen = ImageTk.PhotoImage(imagen)
+	etiqueta.configure(image=imagen)
+	etiqueta.image = imagen
+	ventana = tk.Tk()
+	etiqueta = tk.Label(ventana)
+	etiqueta.pack()
+	abrir_imagen(image_name)
+	ventana.mainloop()
 
 	if cards > 1:
 		card2=info["cards"][1]["image"]
@@ -195,12 +207,7 @@ def victory(sum_num, sum_num2):
 		croupier_deck.pop()
 
 def rules():
-	print("1-El objetivo del juego es llegar a 21, quien mas cerca esté, gana.")
-	print("2-A la hora de sumar las cartas, se suman por su numero excepto el as y las figuras:")
-	print("El AS puede contar como un 1 o como un 11 dependiendo de lo que decida el jugador, las figuras cuentan todas 10.")
-	print("3-El croupier se plantara en el momento que alcance la puntuacion de 16 o mas.")
-	print("4-Cuando al croupier le toca un as, siempre sera 11 a no ser que se pase de 21, entonces sera 1.")
-	print("5-Puedes pedir las cartas que quieras, cuando llegues a 22 o mas habras perdido.")
+	Label("1-El objetivo del juego es llegar a 21, quien mas cerca esté, gana.\n2-A la hora de sumar las cartas, se suman por su numero excepto el as y las figuras:\nEl AS puede contar como un 1 o como un 11 dependiendo de lo que decida el jugador, la    s figuras cuentan todas 10.\n3-El croupier se plantara en el momento que alcance la puntuacion de 16 o mas.\n4-Cuando al croupier le toca un as, siempre sera 11 a no ser que se pase de 21, entonces sera 1.\n5-Puedes pedir las cartas que quieras, cuando llegues a 22 o     mas habras perdido.")	
 
 def game():
 	opc=False
